@@ -15,7 +15,7 @@ class Menu(models.Model):
 
 
 class Order(models.Model):
-    new_order = models.ForeignKey('Room', on_delete=models.DO_NOTHING)
+    order_owner = models.ForeignKey('Room', on_delete=models.DO_NOTHING)
     dish = models.ForeignKey(Menu, on_delete=models.DO_NOTHING)
     amount = models.IntegerField('Количество', validators=[MaxValueValidator(20), MinValueValidator(1)], default=0)
     order_date = models.DateTimeField('Время заказа')
