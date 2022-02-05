@@ -14,6 +14,8 @@ from string import digits
 from django.contrib.auth.models import BaseUserManager
 
 
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField('Номер комнаты', db_index=True, max_length=255, unique=True)
     # password = models.CharField(max_length=4, default=get_pin_code())
@@ -24,7 +26,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     pub_date = models.DateTimeField(default=timezone.now(), blank=True)
     exit_date = models.IntegerField('Время пребывания в днях', blank=True, default=0)
 
-    password = BaseUserManager().make_random_password(4, digits)
 
     objects = UserManager()
 
@@ -37,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.qrcode.save(f'media/qrcode{self.username}.png')
         self.qrcode = f'qrcode{self.username}.png'
         self.save_base(self.qrcode)
-        print(self.password)
+        # print(self.password)
 
     def __str__(self):
         return self.username
