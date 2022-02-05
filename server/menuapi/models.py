@@ -6,8 +6,12 @@ from .managers import *
     # User(AbstractBaseUser, PermissionsMixin)
 # import jwt
 # from django.conf import settings
-# import datetime
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+    # autodelete
+from django.utils import timezone
+import datetime
+from string import digits
+from django.contrib.auth.models import BaseUserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -17,7 +21,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'username'
-    # REQUIRED_FIELDS = ('username',)
+    pub_date = models.DateTimeField(default=timezone.now(), blank=True)
+    exit_date = models.IntegerField('Время пребывания в днях', blank=True, default=0)
+
+    password = BaseUserManager().make_random_password(4, digits)
 
     objects = UserManager()
 
@@ -30,9 +37,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.qrcode.save(f'media/qrcode{self.username}.png')
         self.qrcode = f'qrcode{self.username}.png'
         self.save_base(self.qrcode)
+        print(self.password)
 
     def __str__(self):
         return self.username
+
+    # @property
+    def delete_in_time(self):
+        if self.pub_date < datetime.datetime.now()-datetime.timedelta(seconds=1):
+            e = User.objects.get(pk=self.pk)
+            e.delete()
+            return True
+        else:
+            return False
+
 
     # @property
     # def token(self):

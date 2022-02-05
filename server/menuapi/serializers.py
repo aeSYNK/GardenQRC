@@ -27,7 +27,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'token',)
+        fields = ('username', 'password', 'exit_date', 'token',)
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -42,9 +42,6 @@ class LoginSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
-        """
-        Validates user data.
-        """
         username = data.get('username', None)
         password = data.get('password', None)
 
